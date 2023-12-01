@@ -7,13 +7,16 @@ fn main() {
 }
 
 fn part2(input: &str) -> u32 {
+    let re_first = Regex::new(r"([1-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
+    let re_last = Regex::new(r"([1-9]|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)").unwrap();
+
     let lines = input.split('\n').filter(|l| l.len() > 0).map(|line| {
-        let re = Regex::new(r"([1-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
-        let matches: Vec<&str> = re.find_iter(line).map(|m| m.as_str()).collect();
-        let first = to_num(matches[0]);
-        let last = to_num(matches[matches.len() - 1]);
+        let first = to_num(re_first.find(line).unwrap().into());
+        let reversed: String = line.chars().rev().collect();
+        let last: &str = re_last.find(&reversed).unwrap().into();
+        let last: String = last.chars().rev().collect();
+        let last = to_num(&last);
         let num = format!("{}{}", first, last);
-        dbg!(line, matches, &num);
         num
     });
     lines.map(|line| line.parse::<u32>().unwrap()).sum()
