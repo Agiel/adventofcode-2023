@@ -5,16 +5,16 @@ fn main() {
 }
 
 fn part1(input: &str) -> u32 {
-    let lines = input
-        .split('\n')
-        .filter(|l| l.len() > 0)
+    input
+        .lines()
         .map(|line| {
             line.chars()
                 .filter(|c| c.is_numeric())
                 .collect::<Vec<char>>()
         })
-        .map(|line| format!("{}{}", line[0], line[line.len() - 1]));
-    lines.map(|line| line.parse::<u32>().unwrap()).sum()
+        .map(|line| format!("{}{}", line[0], line[line.len() - 1]))
+        .map(|line| line.parse::<u32>().unwrap())
+        .sum()
 }
 
 #[cfg(test)]

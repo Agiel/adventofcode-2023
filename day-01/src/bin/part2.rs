@@ -10,21 +10,24 @@ fn part2(input: &str) -> u32 {
     let re_first = Regex::new(r"([1-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
     let re_last = Regex::new(r"([1-9]|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)").unwrap();
 
-    let lines = input.split('\n').filter(|l| l.len() > 0).map(|line| {
-        let first = to_num(re_first.find(line).unwrap().into());
-        let reversed: String = line.chars().rev().collect();
-        let last: &str = re_last.find(&reversed).unwrap().into();
-        let last: String = last.chars().rev().collect();
-        let last = to_num(&last);
-        let num = format!("{}{}", first, last);
-        num
-    });
-    lines.map(|line| line.parse::<u32>().unwrap()).sum()
+    input
+        .lines()
+        .map(|line| {
+            let first = to_num(re_first.find(line).unwrap().into());
+            let reversed: String = line.chars().rev().collect();
+            let last: &str = re_last.find(&reversed).unwrap().into();
+            let last: String = last.chars().rev().collect();
+            let last = to_num(&last);
+            let num = format!("{}{}", first, last);
+            num
+        })
+        .map(|line| line.parse::<u32>().unwrap())
+        .sum()
 }
 
 fn to_num(string: &str) -> &str {
-    let first = string.as_bytes()[0];
-    if first.is_ascii_digit() {
+    let first = string.chars().next().unwrap();
+    if first.is_numeric() {
         string
     } else {
         match string {
