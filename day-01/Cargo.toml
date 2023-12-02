@@ -5,4 +5,5 @@ authors = ["Agiel <agiel.negura@gmail.com>"]
 edition = "2021"
 
 [dependencies]
+aho-corasick = "1.1.2"
 regex = "1.10.2"

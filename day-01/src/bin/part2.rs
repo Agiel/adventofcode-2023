@@ -1,9 +1,12 @@
+use aho_corasick::AhoCorasick;
 use regex::Regex;
 
 fn main() {
     let input = include_str!("./input1.txt");
     let sum = part2(input);
     dbg!(sum);
+    let sum_alt = part2_alt(input);
+    dbg!(sum_alt);
 }
 
 fn part2(input: &str) -> u32 {
@@ -18,8 +21,31 @@ fn part2(input: &str) -> u32 {
             let last: &str = re_last.find(&reversed).unwrap().into();
             let last: String = last.chars().rev().collect();
             let last = to_num(&last);
-            let num = format!("{}{}", first, last);
-            num
+            format!("{}{}", first, last)
+        })
+        .map(|line| line.parse::<u32>().unwrap())
+        .sum()
+}
+
+fn part2_alt(input: &str) -> u32 {
+    let patterns = &[
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "one", "two", "three", "four", "five", "six",
+        "seven", "eight", "nine",
+    ];
+    let ac = AhoCorasick::new(patterns).unwrap();
+
+    input
+        .lines()
+        .map(|line| {
+            let mut matches = ac.find_overlapping_iter(line);
+            let first = matches.next().unwrap();
+            let first = to_num(&line[first.start()..first.end()]);
+            let last = if let Some(last) = matches.last() {
+                to_num(&line[last.start()..last.end()])
+            } else {
+                first
+            };
+            format!("{}{}", first, last)
         })
         .map(|line| line.parse::<u32>().unwrap())
         .sum()
@@ -53,5 +79,6 @@ mod tests {
     fn it_works() {
         let input = include_str!("./example2.txt");
         assert_eq!(part2(input), 281);
+        assert_eq!(part2(input), part2_alt(input));
     }
 }
