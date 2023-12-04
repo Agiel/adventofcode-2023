@@ -11,16 +11,13 @@ fn main() {
 
 fn part2(input: &str) -> u32 {
     let re_first = Regex::new(r"([1-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
-    let re_last = Regex::new(r"([1-9]|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)").unwrap();
+    let re_last = Regex::new(r".*([1-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
 
     input
         .lines()
         .map(|line| {
-            let first = to_num(re_first.find(line).unwrap().into());
-            let reversed: String = line.chars().rev().collect();
-            let last: &str = re_last.find(&reversed).unwrap().into();
-            let last: String = last.chars().rev().collect();
-            let last = to_num(&last);
+            let first = to_num(re_first.find(line).unwrap().as_str());
+            let last = to_num(re_last.captures(line).unwrap().get(1).unwrap().as_str());
             format!("{}{}", first, last)
         })
         .map(|line| line.parse::<u32>().unwrap())
@@ -66,7 +63,7 @@ fn to_num(string: &str) -> &str {
             "seven" => "7",
             "eight" => "8",
             "nine" => "9",
-            _ => panic!(),
+            _ => panic!("{string}"),
         }
     }
 }
