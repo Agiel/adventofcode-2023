@@ -5,7 +5,9 @@ use regex::Regex;
 fn main() {
     let input = include_str!("./input1.txt");
     let sum = part2(input);
+    let sum_alt = part2_alt(input);
     dbg!(sum);
+    dbg!(sum_alt);
 }
 
 fn part2(input: &str) -> u32 {
@@ -45,6 +47,32 @@ fn part2(input: &str) -> u32 {
         .sum()
 }
 
+fn part2_alt(input: &str) -> u32 {
+    let mut cards = HashMap::new();
+    input
+        .lines()
+        .enumerate()
+        .map(|(game, line)| {
+            let (_game, nums) = line.split_once(":").unwrap();
+
+            let (winning, ours) = nums.split_once("|").unwrap();
+            let winning = winning.split_whitespace().collect::<HashSet<_>>();
+            let ours = ours.split_whitespace().collect::<HashSet<_>>();
+
+            let score = winning.intersection(&ours).count();
+            let copies = cards.get(&game).unwrap_or(&0) + 1;
+            for i in 1..=score {
+                if let Some(copies_next) = cards.get_mut(&(game + i)) {
+                    *copies_next += copies;
+                } else {
+                    cards.insert(game + i, copies);
+                }
+            }
+            copies
+        })
+        .sum()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -53,5 +81,6 @@ mod tests {
     fn it_works() {
         let input = include_str!("./example1.txt");
         assert_eq!(part2(input), 30);
+        assert_eq!(part2(input), part2_alt(input));
     }
 }
