@@ -48,18 +48,22 @@ fn part1(input: &str) -> u64 {
         }
     }
 
-    seeds.iter().fold(u64::MAX, |acc, seed| {
-        let mut location = seed.clone();
-        maps.iter().for_each(|inner| {
-            for map in inner.iter() {
-                if location >= map.src_start && location <= map.src_start + map.length {
-                    location = map.dst_start + location - map.src_start;
-                    break;
+    seeds
+        .iter()
+        .map(|seed| {
+            let mut location = seed.clone();
+            maps.iter().for_each(|inner| {
+                for map in inner.iter() {
+                    if location >= map.src_start && location <= map.src_start + map.length {
+                        location = map.dst_start + location - map.src_start;
+                        break;
+                    }
                 }
-            }
-        });
-        location.min(acc)
-    })
+            });
+            location
+        })
+        .min()
+        .unwrap()
 }
 
 #[cfg(test)]
