@@ -65,7 +65,7 @@ impl Mapper {
             for range in seed_ranges.iter() {
                 if range.1 >= map.src_start && range.0 <= map.src_start + map.length {
                     if range.0 < map.src_start {
-                        unmapped.push((range.0, map.src_start - range.0));
+                        unmapped.push((range.0, map.src_start));
                     }
                     mapped.push((
                         range.0.max(map.src_start) + map.dst_start - map.src_start,
