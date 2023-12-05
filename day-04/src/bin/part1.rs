@@ -1,11 +1,12 @@
+use aocd::*;
+use regex::Regex;
 use std::collections::HashSet;
 
-use regex::Regex;
-
+#[aocd(2023, 4)]
 fn main() {
-    let input = include_str!("./input1.txt");
-    let sum = part1(input);
-    let sum_alt = part1_alt(input);
+    let input = input!();
+    let sum = part1(&input);
+    let sum_alt = part1_alt(&input);
 
     dbg!(sum);
     dbg!(sum_alt);

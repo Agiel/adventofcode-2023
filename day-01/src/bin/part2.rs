@@ -1,11 +1,13 @@
 use aho_corasick::AhoCorasick;
+use aocd::*;
 use regex::Regex;
 
+#[aocd(2023, 1)]
 fn main() {
-    let input = include_str!("./input1.txt");
-    let sum = part2(input);
+    let input = input!();
+    let sum = part2(&input);
     dbg!(sum);
-    let sum_alt = part2_alt(input);
+    let sum_alt = part2_alt(&input);
     dbg!(sum_alt);
 }
 

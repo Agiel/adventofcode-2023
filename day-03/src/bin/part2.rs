@@ -1,8 +1,10 @@
+use aocd::*;
 use regex::Regex;
 
+#[aocd(2023, 3)]
 fn main() {
-    let input = include_str!("./input1.txt");
-    let sum = part1(input);
+    let input = input!();
+    let sum = part1(&input);
     dbg!(sum);
 }
 
@@ -12,7 +14,6 @@ struct Part<'a> {
     start: i32,
     end: i32,
     value: &'a str,
-    valid: bool,
 }
 
 fn part1(input: &str) -> u32 {
@@ -28,7 +29,6 @@ fn part1(input: &str) -> u32 {
                     start: m.start() as i32,
                     end: m.end() as i32 - 1,
                     value: m.as_str(),
-                    valid: false,
                 })
                 .collect::<Vec<_>>()
         })

@@ -1,6 +1,9 @@
+use aocd::*;
+
+#[aocd(2023, 1)]
 fn main() {
-    let input = include_str!("./input1.txt");
-    let sum = part1(input);
+    let input = input!();
+    let sum = part1(&input);
     dbg!(sum);
 }
 

@@ -1,8 +1,10 @@
+use aocd::*;
 use regex::Regex;
 
+#[aocd(2023, 3)]
 fn main() {
-    let input = include_str!("./input1.txt");
-    let sum = part1(input);
+    let input = input!();
+    let sum = part1(&input);
     dbg!(sum);
 }
 
