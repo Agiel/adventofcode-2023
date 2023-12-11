@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use aocd::*;
 
 #[aocd(2023, 11)]
@@ -10,7 +8,6 @@ fn main() {
 }
 
 fn part2(input: &str, exp_factor: usize) -> usize {
-    let mut galaxy_map = BTreeMap::<(usize, usize), usize>::new();
     let mut galaxies = Vec::<_>::new();
 
     // Map galaxies while expanding vertically
@@ -19,7 +16,6 @@ fn part2(input: &str, exp_factor: usize) -> usize {
         let mut empty = true;
         line.chars().enumerate().for_each(|(x, c)| {
             if c == '#' {
-                galaxy_map.insert((x, y), galaxies.len());
                 galaxies.push((x, y + expansion_y));
                 empty = false;
             }
@@ -29,16 +25,18 @@ fn part2(input: &str, exp_factor: usize) -> usize {
         }
     });
 
+    // Sort the galaxies by x coordinate
+    galaxies.sort();
+
     // Expand horizontally
     let mut expansion_x = 0;
     let mut last_x = 0;
-    // The BTreeMap sorts the galaxies by x coordinate
-    galaxy_map.iter().for_each(|(coord, galaxy)| {
+    galaxies.iter_mut().for_each(|coord| {
         if coord.0 - last_x > 1 {
             expansion_x += (coord.0 - last_x - 1) * (exp_factor - 1);
         }
         last_x = coord.0;
-        galaxies[*galaxy].0 += expansion_x;
+        coord.0 += expansion_x;
     });
 
     // Calculate distances
