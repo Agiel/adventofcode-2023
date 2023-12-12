@@ -9,7 +9,7 @@ fn main() {
 
 struct Record<'a> {
     conditions: &'a str,
-    sequences: Vec<u32>,
+    sequences: Vec<usize>,
 }
 
 fn parse(input: &str) -> Vec<Record> {
@@ -19,7 +19,7 @@ fn parse(input: &str) -> Vec<Record> {
             let (conditions, sequences) = line.split_once(' ').unwrap();
             let sequences = sequences
                 .split(',')
-                .map(|c| c.parse::<u32>().unwrap())
+                .map(|c| c.parse::<usize>().unwrap())
                 .collect::<Vec<_>>();
             Record {
                 conditions,
@@ -29,53 +29,37 @@ fn parse(input: &str) -> Vec<Record> {
         .collect()
 }
 
-fn count_valid(conditions: &str, sequences: &[u32], num_broken: u32) -> u32 {
-    let mut sequences = sequences;
-    let mut num_broken = num_broken;
-    let mut pick_broken = true;
-    if sequences.len() > 0 && num_broken == sequences[0] {
-        if conditions.len() > 0 {
-            match conditions.chars().next().unwrap() {
-                '#' => return 0,
-                '?' => pick_broken = false,
-                _ => (),
-            }
-        }
-        sequences = &sequences[1..];
-        num_broken = 0;
-    }
-
+fn count_valid(conditions: &str, sequences: &[usize]) -> u32 {
     if conditions.len() == 0 {
-        if sequences.len() == 0 && num_broken == 0 {
+        if sequences.len() == 0 {
             return 1;
         }
         return 0;
     }
-
-    match conditions.chars().next().unwrap() {
-        '.' => {
-            if num_broken > 0 {
-                0
-            } else {
-                count_valid(&conditions[1..], sequences, num_broken)
-            }
+    if sequences.len() == 0 {
+        if conditions.contains('#') {
+            return 0;
         }
-        '#' => count_valid(&conditions[1..], sequences, num_broken + 1),
-        '?' => {
-            let operational = if num_broken > 0 {
-                0
-            } else {
-                count_valid(&conditions[1..], sequences, num_broken)
-            };
-            let damaged = if pick_broken {
-                count_valid(&conditions[1..], sequences, num_broken + 1)
-            } else {
-                0
-            };
-            operational + damaged
-        }
-        _ => panic!(),
+        return 1;
     }
+
+    let mut count = 0;
+    let next_char = conditions.chars().next().unwrap();
+    if ".?".contains(next_char) {
+        count += count_valid(&conditions[1..], sequences);
+    }
+    if "#?".contains(next_char) {
+        if sequences[0] <= conditions.len()
+            && !conditions[..sequences[0]].contains('.')
+            && conditions.chars().nth(sequences[0]) != Some('#')
+        {
+            count += count_valid(
+                conditions.get(sequences[0] + 1..).unwrap_or(""),
+                &sequences[1..],
+            );
+        }
+    }
+    count
 }
 
 fn part1(input: &str) -> u32 {
@@ -83,7 +67,7 @@ fn part1(input: &str) -> u32 {
     records
         .iter()
         .map(|record| {
-            let count = count_valid(record.conditions, &record.sequences[..], 0);
+            let count = count_valid(record.conditions, &record.sequences[..]);
             println!(
                 "{:25}{:16}: {}",
                 record.conditions,
