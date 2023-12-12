@@ -39,13 +39,13 @@ fn parse(input: &str) -> Vec<Record> {
         .collect()
 }
 
-fn cache() -> &'static Mutex<HashMap<String, u64>> {
-    static CACHE: OnceLock<Mutex<HashMap<String, u64>>> = OnceLock::new();
+fn cache() -> &'static Mutex<HashMap<(usize, usize), u64>> {
+    static CACHE: OnceLock<Mutex<HashMap<(usize, usize), u64>>> = OnceLock::new();
     CACHE.get_or_init(|| Mutex::new(HashMap::new()))
 }
 
 fn cached_count_valid(conditions: &str, sequences: &[usize]) -> u64 {
-    let hash = format!("{} {:?}", conditions, sequences);
+    let hash = (conditions.len(), sequences.len());
     if let Some(cached) = cache().lock().unwrap().get(&hash) {
         return *cached;
     }
