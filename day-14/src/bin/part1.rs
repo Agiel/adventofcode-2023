@@ -16,7 +16,7 @@ fn part1(input: &str) -> usize {
             lines
                 .iter()
                 .enumerate()
-                .fold(0usize, |acc, (r, line)| match line.chars().nth(c) {
+                .fold(0, |acc, (r, line)| match line.chars().nth(c) {
                     Some('O') => {
                         last += 1;
                         acc + (num_rows - last + 1)
